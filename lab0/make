@@ -1,0 +1,6 @@
+#
+# makefile
+#
+all:
+	gcc -Wall -g -o program project0.c
+	./project0

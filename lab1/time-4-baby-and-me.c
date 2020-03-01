@@ -12,7 +12,7 @@
 #include <stdlib.h>
 
 
-void report(pid_t cp, int status);
+void print_report(pid_t cp, int status);
 
 int main(){
 								//Var declations
@@ -30,11 +30,11 @@ int main(){
 																exit(EXIT_FAILURE);
 								}else if(ProssId == 0) {
 																retval = waitpid(ProssId, &Status, WUNTRACED); // Wait for child/parent
-																report(retval,-1);
+																print_report(retval,-1);
 																exit(EXIT_SUCCESS);
 								}else{
 																retval = waitpid(ProssId, &Status, WUNTRACED); // Wait for child
-																report(retval,Status);
+																print_report(retval,Status);
 																printf("USER: %lu , SYS: %lu \n", t.tms_utime,t.tms_stime);
 																printf("CUSER: %lu , CSYS: %lu \n",t.tms_cutime,t.tms_cstime);
 																Stop = time(NULL);
@@ -42,7 +42,7 @@ int main(){
 								}
 								return 0;
 }
-void report(pid_t cp, int status){
+void print_report(pid_t cp, int status){
 
 								if(status==-1) {
 																printf("PPID: %d, PID: %d",  getppid(),getpid());

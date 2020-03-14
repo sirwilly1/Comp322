@@ -1,3 +1,9 @@
+//Name:kevin Wilczynski
+//Project: Launch Tube
+//description: Forks and prints out basic info on child
+
+
+
 #include <time.h>
 #include <sys/times.h>
 #include <sys/types.h>
@@ -27,8 +33,8 @@ int main(int argc, char * argv[]) {
 
                 }
                 else if (ProssId == 0) {
-
-                        execv(argv[1], argv+1);
+                        execve(argv[1], argv+1, NULL);
+                        //execv(argv[1], argv+1);
                         exit(EXIT_SUCCESS);
 
                 }else if(ProssId>0) {

@@ -3,7 +3,6 @@
 //description: implents a pipe for basic message passing
 
 
-
 #include <time.h>
 #include <sys/times.h>
 #include <sys/types.h>
@@ -44,8 +43,6 @@ int main(int argc, char * argv[]) {
         pid_t child1,child2 ;
 
 
-
-
         if(pipe(fd)==-1){
           fprintf(stderr,"Pipe failed");
           return 1;
@@ -64,7 +61,6 @@ int main(int argc, char * argv[]) {
           printf("HI %s",read_msg);
           close(fd[READ_END]);
         }
-
 
 
         if(child1==0 && child2==0){

@@ -1,0 +1,142 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/resource.h>
+#include <signal.h>
+#include <syslog.h>
+#include <limits.h>
+#include <unistd.h>
+
+pid_t mole1,mole2,daemonpid;
+pid_t pid_child_mole;
+int running = 1;
+
+static void signal_handler(int sig);
+void CreateRandomMole();
+
+int main(int argc, char **argv){
+
+
+
+        pid_t pid,sid;
+        struct rlimit rl;
+
+        int fd0,i;
+        pid = fork();
+
+
+        //2. Fork and have the parent exit
+        if(pid < 0) {
+                printf("fork failed!\n");
+                exit(EXIT_FAILURE);
+        }
+
+        if(pid > 0){
+            printf("Daemon PID: %d\n", pid);
+            exit(EXIT_SUCCESS);
+        }
+
+        umask(0);
+
+        signal(SIGTERM, signal_handler);
+        signal(SIGUSR1, signal_handler);
+        signal(SIGUSR2, signal_handler);
+
+
+
+        setsid();
+        if ((sid = setsid()) < 0){
+              exit(EXIT_FAILURE);
+          }
+          chdir("/");
+          if ((chdir("/")) < 0) {
+              exit(EXIT_FAILURE);
+          }
+
+        //5. Close all unneeded file descriptors
+        getrlimit(RLIMIT_NOFILE, &rl);
+        if (rl.rlim_max == RLIM_INFINITY) {
+                rl.rlim_max = 1024;
+        }
+        for (i = 0; i < rl.rlim_max; i++) {
+                close(i);
+        }
+
+        //fd0 = open("/dev/null", O_RDONLY);
+        //6. Reopen the standard file descriptors to map to /dev/null
+        fd0 = open("/dev/null", O_WRONLY);
+        if ((fd0 = open("/dev/null", O_WRONLY)) < 0){
+          perror("log");
+            }
+
+        dup2(fd0, 0);
+        dup2(fd0, 1);
+        dup2(fd0, 2);
+
+
+
+        // Deamon begins!
+        while(running) {
+                sleep(10);
+        }
+
+
+        return 0;
+}
+
+
+static void signal_handler(int sig){
+    switch(sig){
+    case SIGTERM:
+            kill(mole2, SIGTERM);
+            kill(mole1, SIGTERM);
+            kill(daemonpid, SIGKILL);
+            exit(0);
+
+    case SIGUSR1:
+            CreateRandomMole();
+             kill(mole1, SIGKILL);
+
+    case SIGUSR2:
+            CreateRandomMole();
+            kill(mole2, SIGKILL);
+    }
+}
+
+
+
+
+
+
+void CreateRandomMole(){
+  int random = rand() % 2;
+  //char* Molnum;
+  char Molnum[16];
+  //char *moleArg[3];
+  sprintf(Molnum, "%d", random + 1);
+  char *moleArg[] = {"mole", Molnum, 0};
+  if(random == 1){
+    mole1 = fork();
+  //  Molnum = "1";
+    if(mole1 == 0){
+      // moleArg[0] = 'mole';
+      // moleArg[1] = Molnum;
+      // moleArg[2] = NULL;
+     execv(moleArg[0],moleArg);
+    }
+  }else{
+    mole2 = fork();
+  //  Molnum = "2";
+    if(mole2 == 0){
+      // moleArg[0] = 'mole';
+      // moleArg[1] = Molnum;
+      // moleArg[2] = NULL;
+     execv(moleArg[0],moleArg);
+
+  }
+
+}
+}

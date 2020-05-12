@@ -1,3 +1,5 @@
+excerpt from STARWARS:Rise Of Someone
+
 The Final Order fleet laying in absolute devastation, Hexigel now a waste land of broken ships ,
 and thousands of loyal Final Order shock troops ready to take their lives on learning of Emperor palatines defeat. 
 Rey ignoring this danger crawls over to the Emperors burnt body.
